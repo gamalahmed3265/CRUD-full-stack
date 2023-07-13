@@ -1,7 +1,7 @@
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
-// import { db } from "./connect";
+import { db } from "./connect.js";
 const app = express()
 
 
@@ -10,15 +10,7 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
     next();
   });
-const db = mysql.createConnection({
-    host: "127.0.0.1",
-    port: 3306,
-    user: "root",
-    password: "root123",
-    database: "crud",
-    auth_protocol: 'mysql41'
 
-})
 
 app.get("/", (req, res) => {
     console.log("hello server");

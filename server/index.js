@@ -1,9 +1,11 @@
 import express from "express";
 import mysql from "mysql";
-import cors from "cors";
 import { db } from "./connect.js";
-const app = express()
+import cors from "cors";
 
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 //middlewares
 // app.use((req, res, next) => {
@@ -21,9 +23,9 @@ db.connect((err) => {
     console.log(err);
     return;
   }
-
   console.log('Connected to MySQL!');
 });
+
 app.get("/books", (req, res) => {
   const quary = "SELECT * FROM books";
   db.query(quary, (err, data) => {
@@ -34,7 +36,7 @@ app.get("/books", (req, res) => {
 
 app.post("/books", (req, res) => {
   const quary = "INSERT INTO books (`title`,`desc`,`cover`) VALUES (?) ";
-  // console.log(req.body);
+  console.log(req);
 
   const values = [
     req.body.title,
@@ -47,10 +49,34 @@ app.post("/books", (req, res) => {
     }
     return res.json(data)
   })
-
-  // res.json("y");
 })
 
+app.delete("/books/:id", (req, res) => {
+  const bookId = req.params.id;
+  const q = " DELETE FROM books WHERE id = ? ";
+
+  db.query(q, [bookId], (err, data) => {
+    if (err) return res.send(err);
+    return res.json(data);
+  });
+});
+
+app.put("/books/:id", (req, res) => {
+  const bookId = req.params.id;
+  const q = "UPDATE books SET `title`= ?, `desc`= ?, `price`= ?, `cover`= ? WHERE id = ?";
+
+  const values = [
+    req.body.title,
+    req.body.desc,
+    req.body.price,
+    req.body.cover,
+  ];
+
+  db.query(q, [...values,bookId], (err, data) => {
+    if (err) return res.send(err);
+    return res.json(data);
+  });
+});
 
 app.listen(8800, () => {
   console.log("server is runing");

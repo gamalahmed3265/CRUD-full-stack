@@ -1,5 +1,9 @@
 
 
+### to Run 
+```
+    npm start
+```
 
 
 #### if there auth problem:
